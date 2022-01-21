@@ -1,12 +1,10 @@
 # TP1 - Introduction au C++
 
-
 ## Exercice 1 - Compilation et exécution
 
-1. Quels sont les avantages et désavantages d'un langage dit "*compilé*" (C, C++, Pascal) ou "*semi-compilé*" (Java) comparé à un langage dit "*interpreté*" (Python, PHP, Javascript, etc) ?
+1. Quels sont les avantages et désavantages d'un langage dit "_compilé_" (C, C++, Pascal) ou "_semi-compilé_" (Java) comparé à un langage dit "_interpreté_" (Python, PHP, Javascript, etc) ?
 2. Quelle est la différence entre une erreur de compilation et une erreur d'exécution ? (à quel moment se produisent-elles ? dans quelles circonstances ? comment les identifier ? comment les corriger ? ...)
-3. Que signifie en pratique l'expression "*undefined behavior*" (UB) ? Peut-on compiler un programme contenant du code classifié UB par le standard ? Si oui, que peut-il se produire au moment de son exécution ?
-
+3. Que signifie en pratique l'expression "_undefined behavior_" (UB) ? Peut-on compiler un programme contenant du code classifié UB par le standard ? Si oui, que peut-il se produire au moment de son exécution ?
 
 ## Exercice 2 - Primitives et initialisation
 
@@ -21,8 +19,8 @@ int v(2);    // initialisation avec '(value)'   -> value
 ```
 
 1. Parmi les lignes suivantes, lesquelles déclenchent des erreurs de compilation ? Quelles sont ces erreurs et comment les corriger ?\
-Mêmes questions en ajoutant l'option `-Werror` à la compilation.\
-Vous pouvez utiliser [CompilerExplorer](https://www.godbolt.org/z/rPPoro) pour tester la compilation de petits snippets de code.
+   Mêmes questions en ajoutant l'option `-Werror` à la compilation.\
+   Vous pouvez utiliser [CompilerExplorer](https://www.godbolt.org/z/rPPoro) pour tester la compilation de petits snippets de code.
 
 ```cpp
 short       s0;
@@ -52,8 +50,41 @@ int&       i16 = b2;
 const int& i17{i14};
 ```
 
+```cpp
+    short       s0;
+    const short s1 = 0; // const mais pas initialisé
+
+    const int i1 = 2;
+
+    bool b2{false};
+    bool b3{s1}; // i1 n'est pas un boolean
+    bool b4;
+
+    unsigned       u5{0x10};
+    unsigned short us6 = -10;
+    unsigned long  ul7{b3 + u5 + us6};
+
+    char c8{'a'};//String
+    char c9 = -10;
+
+    double       d10{i1};
+    double&      d11{d10};
+    double&      d12 = d11; //reference devrait etre initialisée
+    const double d13{.0f};
+
+    int        i14 = i1;
+    const int&       i15 = i1;// variable d'origine constante donc reference devrait etre constante aussi
+    bool&       i16 = b2;// variable d'origine est un boolean
+    const int& i17{i14};
+
+    return 0;
+```
+
+-Werror transforme les warnings en erreurs
+
 2. Pouvez-vous donner la valeur de `s0` ? De `ul7` ?
 
+Non car elle sont imprévisibles.
 
 ## Exercice 3 - Les fonctions et leurs paramètres
 
@@ -79,20 +110,48 @@ int main() {
 }
 ```
 
+```cpp
+#include <iostream>
+
+int add(int a, int b) {
+  return a + b;
+}
+
+void add_to(int& a, int b) {
+  a += b;
+}
+
+int main() {
+  const int x{10};
+  int y = add(x, x);
+  add_to(y, 22);
+  std::cout << y << std::endl;
+  return 0;
+}
+```
+
 2. En C++, vous pouvez passer vos paramètres par valeur, par référence et par référence constante.
-Quelles sont les différences entre ces différentes méthodes de passage ?
-Dans quels contextes est-il préférable de passer par valeur ? Par référence ? Et par référence constante ?
+   Quelles sont les différences entre ces différentes méthodes de passage ?
+   Dans quels contextes est-il préférable de passer par valeur ? Par référence ? Et par référence constante ?
+
+Un passage par valeur fait une copie de la valeur c'est avantageux lorsqu'on a des valures qui ne prennent pas bcp d'espace mémoire comme ça on peut la modifier dans la fonction sans que ça n'est d'impacte sur la valeure originale.
+Un passage par référence permet de pouvoir modifier la valeure d'origine dans notre fonction.
+Un passage par reference constante permet de ne pas faire de copie de l'objet d'origine sans pouvoir le modifier c'est utile
+quand on a des objets lourds a passer en paramètre.
 
 3. Modifiez les signatures des fonctions suivantes de manière à ce que le passage de paramètres soit le plus efficace et sécurisé possible.
-Vous pouvez vous aidez des commentaires pour comprendre comment les fonctions utilisent leurs paramètres.
+   Vous pouvez vous aidez des commentaires pour comprendre comment les fonctions utilisent leurs paramètres.
+
 ```cpp
 // Return the number of occurrences of 'a' found in string 's'.
 int count_a_occurrences(std::string s);
+int count_a_occurrences(const std::string& s);
 
 // Update function of a rendering program.
 // - dt (delta time) is read by the function to know the time elapsed since the last frame.
 // - errors is a string filled by the function to indicate what errors have occured.
 void update_loop(const float& dt, std::string& errors_out);
+void update_loop(const float dt, std::string& errors_out);
 
 // Return whether all numbers in 'values' are positive.
 // If there are negative values in it, fill the array 'negative_indices_out' with the indices
@@ -102,23 +161,23 @@ void update_loop(const float& dt, std::string& errors_out);
 //    -> negative_indices contains { 1, 3 } because values[1] = -2 and values[3] = -4
 //    -> negative_count is 2
 bool are_all_positives(std::vector<int> values, int negative_indices_out[], size_t& negative_count_out);
+bool are_all_positives(const std::vector<int>& values, std::vector<int>& negative_indices_out);
 
 // Concatenate 'str1' and 'str2' and return the result.
 // The input parameters are not modified by the function.
 std::string concatenate(char* str1, char* str2);
+std::string concatenate(const std::string& str1, const std::string& str2);
 ```
-
 
 ## Exercice 4 - `std::string` et `std::vector`
 
 1. Ecrivez un programme qui utilise `std::cin` pour lire une variable de type `std::string`, puis calcule et affiche pour chaque lettre miniscule ('a', 'b', ..., 'z') le nombre des fois où elle apparaît.\
-Le comptage des lettres se fera dans une fonction `count_lower` prenant une chaîne de caractères en paramètre et renvoyant un `std::vector<unsigned int>`. La première case du tableau contiendra le nombre d'occurences de 'a', la seconde de 'b', etc.\
-Vous afficherez ce tableau dans une seconde fonction `display_lower_occ`.\
-Essayez d'utiliser les signatures qui rendront votre programme le plus efficace possible.
+   Le comptage des lettres se fera dans une fonction `count_lower` prenant une chaîne de caractères en paramètre et renvoyant un `std::vector<unsigned int>`. La première case du tableau contiendra le nombre d'occurences de 'a', la seconde de 'b', etc.\
+   Vous afficherez ce tableau dans une seconde fonction `display_lower_occ`.\
+   Essayez d'utiliser les signatures qui rendront votre programme le plus efficace possible.
 
 2. Modifiez le programme pour que l'utilisateur puisse entrer plusieurs chaînes de caractères, jusqu'à ce qu'il entre la chaîne "QUIT".\
-Vous afficherez en plus des occurrences la concaténation de toutes les chaînes de caractères renseignées par l'utilisateur.
-
+   Vous afficherez en plus des occurrences la concaténation de toutes les chaînes de caractères renseignées par l'utilisateur.
 
 ## Exercice 5 - Traducteur malade
 
@@ -127,6 +186,7 @@ Dans la vie, on se retrouve souvent face à du code tout pourri qu'il faut débu
 ---
 
 Ce programme consiste en un traducteur, censé s'utiliser comme suit :
+
 ```b
 # Ajoute une nouvelle traduction au dictionnaire dict.txt (il est créé s'il n'existe pas).
 ./translator -d path/to/dict.txt -a chat cat
@@ -136,31 +196,34 @@ Ce programme consiste en un traducteur, censé s'utiliser comme suit :
 ```
 
 Voici le format attendu pour le fichier dict.txt :
+
 ```b
 bonjour hello
 cheval horse
 tu you
 ```
+
 ---
 
 1. Pour commencer, essayez de faire en sorte que le programme compile.\
-Un indice : si seulement on pouvait bannir les chaînes de caractères de type char*.
+   Un indice : si seulement on pouvait bannir les chaînes de caractères de type char\*.
 
 2. Une fois que le programme compile, essayez de le lancer, afin de constater que le programme est bourré de bug.\
-Placez un breakpoint sur la première ligne du `main`, lancez le programme en mode debug et itérez d'instruction en instruction, tout en inspectant le contenu des variables.\
-Cela vous permettra d'identifier d'où viennent les problèmes pour réussir à les corriger.
+   Placez un breakpoint sur la première ligne du `main`, lancez le programme en mode debug et itérez d'instruction en instruction, tout en inspectant le contenu des variables.\
+   Cela vous permettra d'identifier d'où viennent les problèmes pour réussir à les corriger.
 
 > Dans VSCode, vous pouvez placer des breakpoints avec F9, lancer un programme en mode debug via F5 (il faut modifier le fichier launch.json pour passer des arguments au programme), exécuter l'instruction courante avec F10, entrer dans un appel de fonction avec F11 et en sortir avec Shift+F11. Afin de voir le contenu des variables, ouvrez le panneau d'exécution (`View > Run`) et regardez dans la section `Variables`.
 
 > Voici la liste des types de problèmes que trouverez dans le programme :
->- passage par valeur au lieu de référence,
->- mauvais usage de `std::vector`,
->- condition inversée ou au mauvais endroit.
+>
+> - passage par valeur au lieu de référence,
+> - mauvais usage de `std::vector`,
+> - condition inversée ou au mauvais endroit.
 
-3. Si vous parvenez à corriger tous les bugs, vous pouvez faire une dernière passe sur le programme afin de remplacer les passages par valeur coûteux par des passages par const-ref, et ajouter les `const` sur toutes les variables qui ne sont pas modifiées après leur initialisation.   
+3. Si vous parvenez à corriger tous les bugs, vous pouvez faire une dernière passe sur le programme afin de remplacer les passages par valeur coûteux par des passages par const-ref, et ajouter les `const` sur toutes les variables qui ne sont pas modifiées après leur initialisation.
 
 ---
 
 Céline Noël, Stéphane Vialette, Mathias Weller  
-C++ Master 1    
+C++ Master 1  
 2020 - 2021
