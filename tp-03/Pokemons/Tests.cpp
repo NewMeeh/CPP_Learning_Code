@@ -111,31 +111,29 @@ TEST_CASE("A trainer can catch a pokemon") {
     }
 }
 
-// TEST_CASE("A Pokemon knows its trainer")
-// {
-//     auto bulbizarre = std::make_unique<Pokemon>("Bulbizarre");
-//     REQUIRE(bulbizarre->trainer() == nullptr);
+TEST_CASE("A Pokemon knows its trainer") {
+    auto bulbizarre = std::make_unique<Pokemon>("Bulbizarre");
+    REQUIRE(bulbizarre->trainer() == nullptr);
 
-//     PC      pc;
-//     Trainer sacha { "Sacha", pc };
+    PC      pc;
+    Trainer sacha { "Sacha", pc };
 
-//     sacha.capture(std::move(bulbizarre));
-//     REQUIRE(sacha.pokeballs()[0].pokemon().trainer() == &sacha);
-// }
+    sacha.capture(std::move(bulbizarre));
+    REQUIRE(sacha.pokeballs()[0].pokemon().trainer() == &sacha);
+}
 
-// TEST_CASE("A trainer can store Pokemons in the PC")
-// {
-//     PC      pc;
-//     Trainer sacha { "Sacha", pc };
+TEST_CASE("A trainer can store Pokemons in the PC") {
+    PC      pc;
+    Trainer sacha { "Sacha", pc };
 
-//     auto bulbizarre = std::make_unique<Pokemon>("Bulbizarre");
-//     sacha.capture(std::move(bulbizarre));
+    auto bulbizarre = std::make_unique<Pokemon>("Bulbizarre");
+    sacha.capture(std::move(bulbizarre));
 
-//     REQUIRE(pc.pokemons().empty() == true);
-//     sacha.store_in_pc(0);
-//     REQUIRE(pc.pokemons().empty() == false);
-//     REQUIRE(pc.pokemons()[0]->name() == "Bulbizarre");
-// }
+    REQUIRE(pc.pokemons().empty() == true);
+    sacha.store_in_pc(0);
+    REQUIRE(pc.pokemons().empty() == false);
+    REQUIRE(pc.pokemons()[0]->name() == "Bulbizarre");
+}
 
 // TEST_CASE("A trainer can retrieve their Pokemons from the PC")
 // {
