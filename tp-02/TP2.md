@@ -41,7 +41,7 @@ La somme globale est la même (puisqu'elle est globale)
 
 2. Que se passe si on enlève la ligne marquée "initialisation" ?
 
-On a une undefined behavior
+Ça ne va pas compiler car on va avoir une undefined reference.
 
 ## Exercice 2 - Copies
 
@@ -65,6 +65,8 @@ Pourquoi n'est-il pas possible d'initialiser avec `= { 26, 0 }` ? Que devez-vous
 2. Ajoutez un constructeur de copie à votre classe et placez-y des instructions d'affichage (`std::cout`).\
    Si votre programme ne compile plus, expliquez pourquoi et résolvez le problème.
 
+Le programme ne compile plus car on doit redéfinir le constructeur par défaut.
+
 3. Dans le code suivant, selon vous, combien de fois le constructeur de copie sera appelé ?\
    Exécutez le code pour vérifier votre théorie. Recherchez ensuite sur Internet le concept de `copy-elision`.
 
@@ -72,6 +74,8 @@ Pourquoi n'est-il pas possible d'initialiser avec `= { 26, 0 }` ? Que devez-vous
 Histogram h1, h2;
 Histogram h3 { Histogram { h1 } };
 ```
+
+Le constructeur de copie est appelé une seule fois (on s'attendait a deux) car le concept de "copy-elision" permet d'optimiser les copies inutiles.
 
 ## Exercice 3 - Rappels d'événements !
 
