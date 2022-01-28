@@ -6,8 +6,9 @@
 class PC
 {
 public:
-    const std::vector<Pokemon>& pokemons() { return _pokemons; }
+    const std::vector<std::unique_ptr<Pokemon>>& pokemons() { return _pokemons; }
+    void receive(std::unique_ptr<Pokemon> pokemon) { _pokemons.emplace_back(std::move(pokemon)); }
 
 private:
-    std::vector<Pokemon> _pokemons;
+    std::vector<std::unique_ptr<Pokemon>> _pokemons;
 };
