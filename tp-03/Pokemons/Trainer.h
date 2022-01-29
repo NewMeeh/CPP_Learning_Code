@@ -9,10 +9,10 @@ public:
         : _name { name }
         , _pc { pc } {}
 
-    std::string name() { return _name; }
+    const std::string& name() { return _name; }
 
-    std::array<Pokeball, 6>& pokeballs() { return _pokeballs; }
-    void                     capture(std::unique_ptr<Pokemon> pokemon) {
+    const std::array<Pokeball, 6>& pokeballs() { return _pokeballs; }
+    void                           capture(std::unique_ptr<Pokemon> pokemon) {
         pokemon->trainer(this);
         for (int i = 0; i < 6; i++)
         {
